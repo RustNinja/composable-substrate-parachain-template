@@ -1,10 +1,12 @@
+use std::str::FromStr;
+
 use cumulus_primitives_core::ParaId;
 use parachain_template_runtime::{AccountId, AuraId, Signature, EXISTENTIAL_DEPOSIT};
 use sc_chain_spec::{ChainSpecExtension, ChainSpecGroup};
 use sc_service::ChainType;
 use serde::{Deserialize, Serialize};
 use sp_core::{sr25519, Pair, Public};
-use sp_runtime::traits::{IdentifyAccount, Verify};
+use sp_runtime::{traits::{IdentifyAccount, Verify}, AccountId32};
 
 /// Specialized `ChainSpec` for the normal parachain runtime.
 pub type ChainSpec =
@@ -68,6 +70,11 @@ pub fn development_config() -> ChainSpec {
 	properties.insert("tokenDecimals".into(), 12.into());
 	properties.insert("ss58Format".into(), 42.into());
 
+	let x = AccountId32::from_str("1WW56n67DexHEj1PJCiHozJXZ7GNAG5RQyugY5c8GeTHEgr").unwrap();
+	let str1 = x.to_string();
+
+	// assert_eq!("str : {}", str1, "");
+
 	ChainSpec::from_genesis(
 		// Name
 		"Development",
@@ -122,6 +129,11 @@ pub fn local_testnet_config() -> ChainSpec {
 	properties.insert("tokenSymbol".into(), "UNIT".into());
 	properties.insert("tokenDecimals".into(), 12.into());
 	properties.insert("ss58Format".into(), 42.into());
+
+	let x = AccountId32::from_str("1WW56n67DexHEj1PJCiHozJXZ7GNAG5RQyugY5c8GeTHEgr").unwrap();
+	let str1 = x.to_string();
+
+	// assert_eq!("str : {}", str1, "");
 
 	ChainSpec::from_genesis(
 		// Name
@@ -182,6 +194,12 @@ fn testnet_genesis(
 	endowed_accounts: Vec<AccountId>,
 	id: ParaId,
 ) -> parachain_template_runtime::GenesisConfig {
+
+	let sudo = AccountId32::from_str("1WW56n67DexHEj1PJCiHozJXZ7GNAG5RQyugY5c8GeTHEgr").unwrap();
+	let str1 = sudo.to_string();
+
+	// assert_eq!("str : {}", str1, "");
+	
 	parachain_template_runtime::GenesisConfig {
 		system: parachain_template_runtime::SystemConfig {
 			code: parachain_template_runtime::WASM_BINARY
@@ -190,6 +208,9 @@ fn testnet_genesis(
 		},
 		balances: parachain_template_runtime::BalancesConfig {
 			balances: endowed_accounts.iter().cloned().map(|k| (k, 1 << 60)).collect(),
+		},
+		sudo : parachain_template_runtime::SudoConfig{
+			key: Some(sudo)
 		},
 		parachain_info: parachain_template_runtime::ParachainInfoConfig { parachain_id: id },
 		collator_selection: parachain_template_runtime::CollatorSelectionConfig {
